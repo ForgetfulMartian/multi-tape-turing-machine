@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Multi-Tape Turing Machine | Binary Addition Simulator</title>
-  <meta name="description" content="Interactive simulation of a 3-tape Turing Machine performing binary addition. Visualize states, transitions, and tape operations step by step." />
+  <meta name="description"
+    content="Interactive simulation of a 3-tape Turing Machine performing binary addition. Visualize states, transitions, and tape operations step by step." />
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 </head>
+
 <body>
   <!-- Preloader -->
   <div class="preloader" id="preloader">
@@ -49,14 +52,16 @@
               <label class="input-label">
                 A <span class="tape-badge">Tape 1</span>
               </label>
-              <input type="text" class="input-field" id="input-a" placeholder="e.g. 1011" autocomplete="off" spellcheck="false" />
+              <input type="text" class="input-field" id="input-a" placeholder="e.g. 1011" autocomplete="off"
+                spellcheck="false" />
               <div class="decimal-preview" id="preview-a"></div>
             </div>
             <div class="input-group">
               <label class="input-label">
                 B <span class="tape-badge tape-badge--b">Tape 2</span>
               </label>
-              <input type="text" class="input-field" id="input-b" placeholder="e.g. 1101" autocomplete="off" spellcheck="false" />
+              <input type="text" class="input-field" id="input-b" placeholder="e.g. 1101" autocomplete="off"
+                spellcheck="false" />
               <div class="decimal-preview" id="preview-b"></div>
             </div>
             <button class="btn btn--primary btn--load" id="btn-load">Run Machine</button>
@@ -120,7 +125,8 @@
               </div>
               <div class="status-item status-item--wide">
                 <div class="status-item__label">Description</div>
-                <div class="status-item__value state-name" id="status-desc" style="font-size:0.65rem; color: var(--text-secondary);">Load inputs to begin</div>
+                <div class="status-item__value state-name" id="status-desc"
+                  style="font-size:0.65rem; color: var(--text-secondary);">Load inputs to begin</div>
               </div>
             </div>
           </div>
@@ -137,7 +143,8 @@
           <div class="panel__body" id="tapes-body">
             <div class="empty-state" id="tapes-empty">
               <div class="empty-state__icon">⊞</div>
-              <div class="empty-state__text">Enter two binary numbers and click <strong>Load &amp; Initialize</strong></div>
+              <div class="empty-state__text">Enter two binary numbers and click <strong>Load &amp; Initialize</strong>
+              </div>
             </div>
             <div id="tapes-render" style="display:none;">
               <div class="tape-container" id="tape-0-container">
@@ -218,6 +225,7 @@
     </div>
   </div>
 
-  <script type="module" src="/src/app.js"></script>
+  <script type="module" src="./src/app.js"></script>
 </body>
+
 </html>
