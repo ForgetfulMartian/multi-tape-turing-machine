@@ -1,0 +1,15 @@
+{
+  "name": "multi-tape-turing-machine",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Multi-Tape Turing Machine Binary Addition Simulator",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^6.0.0"
+  }
+}

@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Multi-Tape Turing Machine | Binary Addition Simulator</title>
+  <meta name="description" content="Interactive simulation of a 3-tape Turing Machine performing binary addition. Visualize states, transitions, and tape operations step by step." />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+</head>
+<body>
+  <!-- Preloader -->
+  <div class="preloader" id="preloader">
+    <div class="preloader__spinner"></div>
+    <div class="preloader__text">Initializing</div>
+  </div>
+
+  <!-- Hidden canvases (kept for compat) -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="grid-overlay"></div>
+
+  <div class="app-wrapper">
+    <!-- Compact Header Bar -->
+    <header class="header">
+      <div class="header__left">
+        <div class="header__badge">
+          <span class="dot"></span>
+          TM Simulator
+        </div>
+        <h1 class="header__title">Multi-Tape Turing Machine — Binary Addition</h1>
+      </div>
+      <p class="header__subtitle">3 Tapes · 5 States</p>
+    </header>
+
+    <!-- Full-Height Layout -->
+    <div class="main-layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <!-- Input -->
+        <section class="panel" id="input-panel">
+          <div class="panel__header">
+            <span class="icon">⌨</span> Input
+          </div>
+          <div class="panel__body">
+            <div class="input-mode-toggle">
+              <button class="mode-btn active" id="mode-binary" data-mode="binary">Binary</button>
+              <button class="mode-btn" id="mode-decimal" data-mode="decimal">Decimal</button>
+            </div>
+            <div class="input-group">
+              <label class="input-label">
+                A <span class="tape-badge">Tape 1</span>
+              </label>
+              <input type="text" class="input-field" id="input-a" placeholder="e.g. 1011" autocomplete="off" spellcheck="false" />
+              <div class="decimal-preview" id="preview-a"></div>
+            </div>
+            <div class="input-group">
+              <label class="input-label">
+                B <span class="tape-badge tape-badge--b">Tape 2</span>
+              </label>
+              <input type="text" class="input-field" id="input-b" placeholder="e.g. 1101" autocomplete="off" spellcheck="false" />
+              <div class="decimal-preview" id="preview-b"></div>
+            </div>
+            <button class="btn btn--primary btn--load" id="btn-load">Run Machine</button>
+            <div class="examples-row">
+              <button class="example-chip" data-a="101" data-b="11">101+11</button>
+              <button class="example-chip" data-a="1111" data-b="1">1111+1</button>
+              <button class="example-chip" data-a="1010" data-b="1010">1010+1010</button>
+              <button class="example-chip" data-a="11111111" data-b="1">overflow</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Controls -->
+        <section class="panel" id="controls-panel">
+          <div class="panel__header">
+            <span class="icon">▶</span> Controls
+          </div>
+          <div class="panel__body">
+            <div class="controls-row">
+              <button class="ctrl-btn" id="btn-reset" data-tooltip="Reset" disabled>⟲</button>
+              <button class="ctrl-btn" id="btn-step-back" data-tooltip="Step Back" disabled>⏮</button>
+              <button class="ctrl-btn" id="btn-play" data-tooltip="Play / Pause" disabled>▶</button>
+              <button class="ctrl-btn" id="btn-step-fwd" data-tooltip="Step Forward" disabled>⏭</button>
+              <button class="ctrl-btn" id="btn-fast-fwd" data-tooltip="Run to End" disabled>⏩</button>
+            </div>
+            <div class="speed-control">
+              <div class="speed-label">
+                <span>Speed</span>
+                <span id="speed-value">500ms</span>
+              </div>
+              <input type="range" class="speed-slider" id="speed-slider" min="50" max="2000" value="500" step="50" />
+            </div>
+            <div class="shortcuts-hint">
+              <kbd>Space</kbd> Play &nbsp; <kbd>→</kbd> Step &nbsp; <kbd>←</kbd> Back &nbsp; <kbd>R</kbd> Reset
+            </div>
+          </div>
+        </section>
+
+        <!-- Status -->
+        <section class="panel" id="status-panel">
+          <div class="panel__header">
+            <span class="icon">◉</span> Status
+          </div>
+          <div class="panel__body">
+            <div class="status-grid">
+              <div class="status-item">
+                <div class="status-item__label">State</div>
+                <div class="status-item__value state-name" id="status-state">—</div>
+              </div>
+              <div class="status-item">
+                <div class="status-item__label">Step</div>
+                <div class="status-item__value" id="status-step">0</div>
+              </div>
+              <div class="status-item">
+                <div class="status-item__label">Carry</div>
+                <div class="status-item__value" id="status-carry">0</div>
+              </div>
+              <div class="status-item">
+                <div class="status-item__label">Status</div>
+                <div class="status-item__value" id="status-running" style="color: var(--text-tertiary);">Idle</div>
+              </div>
+              <div class="status-item status-item--wide">
+                <div class="status-item__label">Description</div>
+                <div class="status-item__value state-name" id="status-desc" style="font-size:0.65rem; color: var(--text-secondary);">Load inputs to begin</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Main Content — Fills remaining viewport -->
+      <main class="main-content">
+        <!-- Tapes -->
+        <section class="panel tapes-section" id="tapes-panel">
+          <div class="panel__header">
+            <span class="icon">📼</span> Tapes
+          </div>
+          <div class="panel__body" id="tapes-body">
+            <div class="empty-state" id="tapes-empty">
+              <div class="empty-state__icon">⊞</div>
+              <div class="empty-state__text">Enter two binary numbers and click <strong>Load &amp; Initialize</strong></div>
+            </div>
+            <div id="tapes-render" style="display:none;">
+              <div class="tape-container" id="tape-0-container">
+                <div class="tape-label">
+                  <span class="tape-label__name">Tape 1 — Input A</span>
+                  <span class="tape-label__tag">Read</span>
+                </div>
+                <div class="tape-track" id="tape-0-track"></div>
+              </div>
+              <div class="tape-container" id="tape-1-container">
+                <div class="tape-label">
+                  <span class="tape-label__name">Tape 2 — Input B</span>
+                  <span class="tape-label__tag tape-label__tag--b">Read</span>
+                </div>
+                <div class="tape-track" id="tape-1-track"></div>
+              </div>
+              <div class="tape-container" id="tape-2-container">
+                <div class="tape-label">
+                  <span class="tape-label__name">Tape 3 — Output (Sum)</span>
+                  <span class="tape-label__tag tape-label__tag--out">Write</span>
+                </div>
+                <div class="tape-track" id="tape-2-track"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Result Banner -->
+        <div class="result-banner" id="result-banner">
+          <div class="result-banner__label">✓ Computation Complete</div>
+          <div class="result-banner__value" id="result-value">—</div>
+          <div class="result-banner__decimal" id="result-decimal">—</div>
+        </div>
+
+        <!-- Bottom: State Diagram + Transition Table + Log -->
+        <div class="bottom-section">
+          <!-- Left: State Diagram + Transition Table stacked -->
+          <section class="panel">
+            <div class="panel__header">
+              <span class="icon">◎</span> State Diagram &amp; Transitions (δ)
+            </div>
+            <div class="panel__body">
+              <div class="state-diagram-container">
+                <canvas id="state-diagram"></canvas>
+              </div>
+              <div class="transition-table-wrap" id="transition-table-wrap" style="margin-top:0.5rem;">
+                <table class="transition-table" id="transition-table">
+                  <thead>
+                    <tr>
+                      <th>From</th>
+                      <th>Read (T1,T2)</th>
+                      <th>Write (T3)</th>
+                      <th>Move</th>
+                      <th>To</th>
+                    </tr>
+                  </thead>
+                  <tbody id="transition-table-body"></tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- Right: Execution Log -->
+          <section class="panel">
+            <div class="panel__header">
+              <span class="icon"></span> Execution Log
+            </div>
+            <div class="panel__body">
+              <div class="exec-log" id="exec-log">
+                <div class="empty-state" style="padding:1.5rem 0;">
+                  <div class="empty-state__text" style="font-size:0.72rem;">Steps appear here during execution</div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>
