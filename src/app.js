@@ -34,6 +34,7 @@ const exampleChips = document.querySelectorAll('.example-chip');
 document.addEventListener('DOMContentLoaded', () => {
   initBackground();
   renderer = new Renderer();
+  console.log('TM Simulator: Renderer initialized');
   bindEvents();
   updateInputPreviews();
 
